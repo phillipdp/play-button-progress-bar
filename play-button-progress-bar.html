@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<title>Video play button progress bar</title>
+	<style type="text/css">
+		.videocontainer {margin: 0; box-sizing: border-box; border: 0 none; padding: 2.5% 20px; display: flex; flex-flow: row wrap; align-content: center; align-items: center; justify-content: center; background-color: #cccccc;}
+		.videoholder {margin: 0; border: 0 none; position: relative; aspect-ratio: 16 / 9; display: block; width: 100%; max-width: 1140px;}
+		.videoholder video {margin: 0; position: absolute; top: 0; left: 0; display: block; width: 100%; height: 100%;}
+		.videoaction {margin: 0; position: absolute; top: 0; left: 0; display: block; width: 100%; height: 100%;}
+		.videobutton {margin: 0; border: 0 none; border-radius: 5px; padding: 0; position: absolute; top: 50%; left: 50%; display: block; width: 65px; height: 40px; background-color: rgba(0, 0, 0, .75); opacity: 1; transition: background-color .5s ease-out, opacity .5s ease-out; overflow: hidden; transform: translateX(-50%) translateY(-50%); cursor: pointer;}
+		.videobutton::before {content: ''; margin: 0; border-left: 8px solid #fbed21; border-right: 8px solid #fbed21; position: absolute; top: 50%; left: 50%; display: none; width: 5px; height: 19px; transform: translateX(-50%) translateY(-50%); transition: border-left .5s ease-out, border-right .5s ease-out;;}
+		.videobutton::after {content: ''; margin: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid #fbed21; position: absolute; top: 50%; left: 50%; display: block; width: 0; height: 0; transform: translateX(-50%) translateY(-50%); transition: border-left .5s ease-out;}
+		.videobutton:hover {background-color: #fbed21;}
+		.videobutton:hover::before {border-left: 8px solid #000000; border-right: 8px solid #000000;}
+		.videobutton:hover::after {border-left: 15px solid #000000;}
+
+		.videotrack {position: absolute; bottom: 0; left: 0; display: none; width: 100%; height: 3px; background-color: rgba(0, 0, 0, .1);}
+		.videotrack span {margin: 0; position: absolute; top: 0; left: 0; display: block; width: 0%; height: 100%; background-color: #fbed21;}
+		.videobutton:hover .shft_videotrack span {background-color: #000000;}
+
+		.videoholder.playing .videoaction {opacity: 0;}
+		.videoholder.playing .videoaction:hover {opacity: 1;}
+		.videoholder.playing .videoaction:hover .videobutton {background-color: rgba(0, 0, 0, .75) !important;}
+		.videoholder.playing .videobutton::before {display: block;}
+		.videoholder.playing .videobutton::after {display: none;}
+		.videoholder.playing .videotrack {display: block;}
+	</style>
+	<script type="text/javascript">
+		/*function playintrovideo(e){
+			e.preventDefault();
+			let tgtvid = document.querySelector("video#shft_" + this.dataset.introvideo);
+			tgtvid.classList.add("active");
+			tgtvid.parentNode.classList.add("playing");
+			tgtvid.play();
+			return;
+		}
+
+		function pauseintrovideo(e){
+			e.preventDefault();
+			this.pause();
+			this.classList.remove("active");
+			this.parentNode.classList.remove("playing");
+			document.querySelector(".shft_video_holder .pause").removeAttribute("style");
+			return;
+		}
+
+		function pausefollow(e){
+			//console.log(e.pageX + " - " + e.pageY);
+			let thepause = document.querySelector(".shft_video_holder .pause");
+			thepause.style.top = e.pageY + "px";
+			thepause.style.left = e.pageX + "px";
+		}*/
+
+		let currentvideo = null;	
+		function actionvideo(e){
+			e.preventDefault();
+			let pc = this.parentNode.parentNode;
+			//console.log(pc);
+			currentvideo = pc.querySelector("video");
+			if(!pc.classList.contains("playing") && !pc.classList.contains("paused")){
+				currentvideo.addEventListener("timeupdate", updatevideotrack);
+				currentvideo.addEventListener("ended", trashvideo);
+				// First time the video has been played
+				pc.classList.add("playing");
+				currentvideo.volume = 0.5;
+				currentvideo.play();
+				return;
+			}
+			if(pc.classList.contains("playing")){
+				// video has been started
+				currentvideo.pause();
+				pc.classList.remove("playing");
+				pc.classList.add("paused");
+				return;
+			}
+			if(pc.classList.contains("paused")){
+				// video is paused
+				currentvideo.play();
+				pc.classList.remove("paused");
+				pc.classList.add("playing");
+				return;
+			}
+		}
+
+		function updatevideotrack(pc){
+			const barLength = (currentvideo.currentTime/currentvideo.duration) * 100;
+			let curvideotrack = currentvideo.nextElementSibling.querySelector(".videotrack span");
+			curvideotrack.style.width = barLength + "%";
+		}
+
+		function trashvideo(){
+			currentvideo.currentTime = 0;
+			currentvideo.removeEventListener("timeupdate", updatevideotrack);
+			currentvideo.removeEventListener("ended", trashvideo);
+			currentvideo = null;
+			document.querySelector(".playing").classList.remove("playing");
+		}
+
+		document.addEventListener("DOMContentLoaded", ()=>{
+			let videos = document.querySelectorAll(".videocontainer");
+			if(!!videos && videos.length > 0){
+				for(let v = 0; v < videos.length; ++v)
+					videos[v].querySelector(".videobutton").addEventListener("click", actionvideo, true);
+			}
+		});
+	</script>
+</head>
+
+<body>
+<div class="videocontainer">
+	<div class="videoholder">
+		<video src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4" poster="" preload="metadata" playsinline=""></video>
+		<div class="videoaction">
+			<div class="videobutton">
+				<div class="videotrack"><span></span></div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
