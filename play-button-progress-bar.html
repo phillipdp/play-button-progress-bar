@@ -17,7 +17,7 @@
 
 		.videotrack {position: absolute; bottom: 0; left: 0; display: none; width: 100%; height: 3px; background-color: rgba(0, 0, 0, .1);}
 		.videotrack span {margin: 0; position: absolute; top: 0; left: 0; display: block; width: 0%; height: 100%; background-color: #fbed21;}
-		.videobutton:hover .shft_videotrack span {background-color: #000000;}
+		.videobutton:hover .videotrack span {background-color: #000000;}
 
 		.videoholder.playing .videoaction {opacity: 0;}
 		.videoholder.playing .videoaction:hover {opacity: 1;}
@@ -27,31 +27,6 @@
 		.videoholder.playing .videotrack {display: block;}
 	</style>
 	<script type="text/javascript">
-		/*function playintrovideo(e){
-			e.preventDefault();
-			let tgtvid = document.querySelector("video#shft_" + this.dataset.introvideo);
-			tgtvid.classList.add("active");
-			tgtvid.parentNode.classList.add("playing");
-			tgtvid.play();
-			return;
-		}
-
-		function pauseintrovideo(e){
-			e.preventDefault();
-			this.pause();
-			this.classList.remove("active");
-			this.parentNode.classList.remove("playing");
-			document.querySelector(".shft_video_holder .pause").removeAttribute("style");
-			return;
-		}
-
-		function pausefollow(e){
-			//console.log(e.pageX + " - " + e.pageY);
-			let thepause = document.querySelector(".shft_video_holder .pause");
-			thepause.style.top = e.pageY + "px";
-			thepause.style.left = e.pageX + "px";
-		}*/
-
 		let currentvideo = null;	
 		function actionvideo(e){
 			e.preventDefault();
